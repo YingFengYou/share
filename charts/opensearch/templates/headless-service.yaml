@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "opensearch.fullname" . }}-headless
+  labels:
+    {{- include "opensearch.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - port: {{ .Values.headlessService.port }}
+      targetPort: {{ .Values.headlessService.port }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "opensearch.selectorLabels" . | nindent 4 }}

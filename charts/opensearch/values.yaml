@@ -1,0 +1,61 @@
+replicaCount: 3
+
+deployment:
+  enabled: false
+
+statefulset:
+  enabled: true
+
+image:
+  repository: opensearchproject/opensearch
+  tag: 3.4.0
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 9200
+
+headlessService:
+  port: 9200
+
+config:
+  opensearch.yml:
+    cluster.name: opensearch-cluster
+    node.name: ${HOSTNAME}
+    network.host: 0.0.0.0
+    discovery.seed_hosts: "opensearch-headless"
+    cluster.initial_master_nodes: "opensearch-0,opensearch-1,opensearch-2"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+persistence:
+  enabled: true
+  storageClassName: standard
+  size: 10Gi
+
+nodeGroup: "default"
+
+clusterDomain: "cluster.local"
+
+serviceAccount:
+  create: true
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  runAsUser: 1000
+
+autoscaling:
+  enabled: false
+
+imagePullSecrets: []
