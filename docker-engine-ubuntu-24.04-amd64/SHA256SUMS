@@ -1,0 +1,5 @@
+7327ab23182425e94b46a91567e9ddf0183f9b3a5ed53d5e2489f000dbf9cfe2  containerd.io_2.4.2-2~ubuntu.24.04~noble_amd64.deb
+7094f8b50bc6b239292d475620424a531f7fa0763e466c52ffc3a4037e72bfc5  docker-buildx-plugin_0.38.0-1~ubuntu.24.04~noble_amd64.deb
+961968342af4738eb5fb5fc03f9834106c1e454bd010d574cf1a6feae9905efc  docker-ce-cli_29.9.1-1~ubuntu.24.04~noble_amd64.deb
+463a666215797c9f9ea7d0ad1751de5b2b3806a1b539a3550e16822ef34ccbfd  docker-ce_29.9.1-1~ubuntu.24.04~noble_amd64.deb
+132266d499d9873aafcbe5b515997b8abd714914fa32a62ccac705c1ede7ca81  docker-compose-plugin_5.6.0-1~ubuntu.24.04~noble_amd64.deb
