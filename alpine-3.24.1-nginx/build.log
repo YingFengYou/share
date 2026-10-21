@@ -1,0 +1,31 @@
+STEP 1/6: FROM alpine:3.24.1
+STEP 2/6: LABEL org.opencontainers.image.title="alpine-nginx"       org.opencontainers.image.description="Nginx on Alpine Linux 3.24.1"       org.opencontainers.image.base.name="alpine:3.24.1"
+--> 83418f093ab2
+STEP 3/6: RUN apk upgrade --no-cache     && apk add --no-cache nginx     && mkdir -p /run/nginx     && chown -R nginx:nginx /var/lib/nginx /var/log/nginx /run/nginx
+Preupgrading:
+(1/2) Upgrading libapk (3.0.6-r0 -> 3.0.8-r0)
+(2/2) Upgrading apk-tools (3.0.6-r0 -> 3.0.8-r0)
+Executing busybox-1.37.0-r31.trigger
+Continuing with the main upgrade transaction:
+(1/5) Upgrading alpine-release (3.24.1-r0 -> 3.24.2-r0)
+(2/5) Upgrading libcrypto3 (3.5.7-r0 -> 3.5.9-r0)
+(3/5) Upgrading libssl3 (3.5.7-r0 -> 3.5.9-r0)
+(4/5) Upgrading zlib (1.3.2-r0 -> 1.3.2-r1)
+(5/5) Upgrading ca-certificates-bundle (20260611-r0 -> 20261020-r0)
+OK: 8432 KiB in 16 packages
+(1/2) Installing pcre2 (10.49-r0)
+(2/2) Installing nginx (1.30.4-r1)
+  Executing nginx-1.30.4-r1.pre-install
+  Executing nginx-1.30.4-r1.post-install
+Executing busybox-1.37.0-r31.trigger
+OK: 10.3 MiB in 18 packages
+--> 98e9efa70a72
+STEP 4/6: EXPOSE 80
+--> f18b4cc0668a
+STEP 5/6: STOPSIGNAL SIGQUIT
+--> 08f3a3734915
+STEP 6/6: CMD ["nginx", "-g", "daemon off;"]
+COMMIT alpine:3.24.1-nginx
+--> 28109a8db9a5
+Successfully tagged localhost/alpine:3.24.1-nginx
+28109a8db9a5aeb0e085b54ec064294e02206efdccd29c265bd3e3badb4d64e1
