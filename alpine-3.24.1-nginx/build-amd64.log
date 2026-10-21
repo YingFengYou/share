@@ -1,0 +1,23 @@
+STEP 1/4: FROM docker.io/library/nginx:1.30.4-alpine3.24-slim
+Trying to pull docker.io/library/nginx:1.30.4-alpine3.24-slim...
+Getting image source signatures
+Copying blob sha256:6710fa5752a599abf4c9f536edfe5be7952768135b5050ac9afdefc0533834a2
+Copying blob sha256:55afa1ecc21d2bb5e5045f32dafee56272ffd89860bac26f6c32123439af26a4
+Copying blob sha256:67ff5ce9d4e9e840b2a802e06f9db7aa2526032b11972f065750ca6082d06f2c
+Copying blob sha256:51ec9c021a5aa5f4b4e020396c3080d9434d71d75288c5f4b06bfc78104310fe
+Copying blob sha256:f45fdf63315816ec6bd937d40fb4450c1364e299cf7bdb48c14d19ee26ce32a0
+Copying blob sha256:33e5f432b4d0343ae580ca491ee35e51f51000f5694efd025a8af08e0be7c729
+Copying blob sha256:0bfd0ed0041486dd19ac2807088044b7b750d7ce008314ef49e75d92f42b9c19
+Copying config sha256:880af632baee5008359a9af777b5003c94ba7dafb2fedfe314c4b9532048f594
+Writing manifest to image destination
+STEP 2/4: LABEL org.opencontainers.image.title="nginx-alpine"       org.opencontainers.image.description="Official Nginx 1.30.4 on Alpine Linux 3.24.1 slim with pcre2 security update"       org.opencontainers.image.base.name="nginx:1.30.4-alpine3.24-slim"
+--> 633c64825ee3
+STEP 3/4: RUN apk add --no-cache --upgrade pcre2
+(1/1) Upgrading pcre2 (10.48-r0 -> 10.49-r0)
+OK: 12.0 MiB in 21 packages
+--> d311b9b87798
+STEP 4/4: EXPOSE 80
+COMMIT nginx:1.30.4-alpine3.24-slim-secure
+--> fe61d8952d09
+Successfully tagged localhost/nginx:1.30.4-alpine3.24-slim-secure
+fe61d8952d09ca2db4705396235e98a25cb562d163c15b616d5c465edddac982

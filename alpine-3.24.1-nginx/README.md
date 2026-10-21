@@ -1,38 +1,38 @@
-# Alpine 3.24.1 + Nginx
+# Nginx 1.30.4 on Alpine 3.24.1 (amd64)
 
-ARM64 OCI/Docker image built from `alpine:3.24.1` with Nginx installed from the Alpine 3.24 repository.
+这是从 Docker Hub 官方镜像 `nginx:1.30.4-alpine3.24-slim` 下载并基于其制作的安全更新镜像，目标平台为 `linux/amd64`。
 
-## Image details
+## 镜像信息
 
-- Base image: `alpine:3.24.1`
-- Nginx: `1.30.4-r1`
-- Architecture: `linux/arm64`
-- Image ID: `sha256:28109a8db9a5aeb0e085b54ec064294e02206efdccd29c265bd3e3badb4d64e1`
-- Default command: `nginx -g 'daemon off;'`
-- Port: `80`
+- 官方基础镜像：`docker.io/library/nginx:1.30.4-alpine3.24-slim`
+- Alpine：`3.24.1`
+- Nginx：`1.30.4`
+- 架构：`linux/amd64`
+- 镜像 ID：`sha256:fe61d8952d09ca2db4705396235e98a25cb562d163c15b616d5c465edddac982`
+- 端口：`80`
 
-The build runs `apk upgrade --no-cache` before installing Nginx so that security updates available in the Alpine 3.24 repository are included while retaining the Alpine 3.24.1 base image lineage.
+构建仅升级了 `pcre2` 安全包，保留官方 Nginx 的 entrypoint、配置和运行方式。
 
-## Load and run
-
-```bash
-docker load -i alpine-3.24.1-nginx-arm64.docker.tar
-docker run --rm -p 8080:80 alpine:3.24.1-nginx
-```
-
-For Podman, the OCI archive is also provided:
+## 加载和运行
 
 ```bash
-podman load -i alpine-3.24.1-nginx-arm64.oci.tar
+docker load -i nginx-1.30.4-alpine3.24-slim-secure-amd64.docker.tar
+docker run --rm -p 8080:80 nginx:1.30.4-alpine3.24-slim-secure
 ```
 
-## Vulnerability scan
+Podman 用户也可以加载 OCI 归档：
 
-Scanned with Trivy `0.76.0` using the vulnerability database available at build time.
+```bash
+podman load -i nginx-1.30.4-alpine3.24-slim-secure-amd64.oci.tar
+```
 
-- High: `0`
-- Critical: `0`
-- Scan target: `alpine-3.24.1-nginx-arm64.docker.tar`
-- Report: `trivy-report.json`
+## 漏洞扫描
 
-Checksums are provided in the corresponding `.sha256` files.
+使用 Trivy `0.76.0` 扫描镜像归档：
+
+- High：`0`
+- Critical：`0`
+- Medium：`1`
+- 扫描目标：`nginx-1.30.4-alpine3.24-slim-secure-amd64.docker.tar`
+
+对应的完整 JSON 报告和 SHA256 校验文件也包含在目录和 Release 中。

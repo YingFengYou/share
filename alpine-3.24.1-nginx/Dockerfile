@@ -1,16 +1,9 @@
-FROM alpine:3.24.1
+FROM docker.io/library/nginx:1.30.4-alpine3.24-slim
 
-LABEL org.opencontainers.image.title="alpine-nginx" \
-      org.opencontainers.image.description="Nginx on Alpine Linux 3.24.1" \
-      org.opencontainers.image.base.name="alpine:3.24.1"
+LABEL org.opencontainers.image.title="nginx-alpine" \
+      org.opencontainers.image.description="Official Nginx 1.30.4 on Alpine Linux 3.24.1 slim with pcre2 security update" \
+      org.opencontainers.image.base.name="nginx:1.30.4-alpine3.24-slim"
 
-RUN apk upgrade --no-cache \
-    && apk add --no-cache nginx \
-    && mkdir -p /run/nginx \
-    && chown -R nginx:nginx /var/lib/nginx /var/log/nginx /run/nginx
+RUN apk add --no-cache --upgrade pcre2
 
 EXPOSE 80
-
-STOPSIGNAL SIGQUIT
-
-CMD ["nginx", "-g", "daemon off;"]
