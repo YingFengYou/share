@@ -1,0 +1,85 @@
+name: Download and release LiteLLM and Cognee images
+
+on:
+  workflow_dispatch:
+    inputs:
+      litellm_tag:
+        description: 'Official LiteLLM image tag'
+        required: true
+        default: 'latest'
+      cognee_tag:
+        description: 'Official Cognee image tag'
+        required: true
+        default: 'main'
+      release_tag:
+        description: 'GitHub Release tag'
+        required: true
+        default: 'litellm-cognee-20261118'
+  push:
+    paths:
+      - '.github/workflows/litellm-cognee-release.yml'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  download-push-release:
+    runs-on: ubuntu-latest
+    env:
+      LITELLM_SOURCE: docker.litellm.ai/berriai/litellm:${{ inputs.litellm_tag || 'latest' }}
+      COGNEE_SOURCE: cognee/cognee:${{ inputs.cognee_tag || 'main' }}
+      LITELLM_TARGET: ghcr.io/yingfengyou/litellm:${{ inputs.litellm_tag || 'latest' }}
+      COGNEE_TARGET: ghcr.io/yingfengyou/cognee:${{ inputs.cognee_tag || 'main' }}
+      RELEASE_TAG: ${{ inputs.release_tag || 'litellm-cognee-20261118' }}
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull official images
+        run: |
+          set -eux
+          docker pull "$LITELLM_SOURCE"
+          docker pull "$COGNEE_SOURCE"
+
+      - name: Retag and push images to GHCR
+        run: |
+          set -eux
+          docker tag "$LITELLM_SOURCE" "$LITELLM_TARGET"
+          docker tag "$COGNEE_SOURCE" "$COGNEE_TARGET"
+          docker push "$LITELLM_TARGET"
+          docker push "$COGNEE_TARGET"
+
+      - name: Export image archives and checksums
+        run: |
+          set -eux
+          docker save "$LITELLM_TARGET" -o "litellm-${{ inputs.litellm_tag || 'latest' }}.docker.tar"
+          docker save "$COGNEE_TARGET" -o "cognee-${{ inputs.cognee_tag || 'main' }}.docker.tar"
+          sha256sum "litellm-${{ inputs.litellm_tag || 'latest' }}.docker.tar" > "litellm-${{ inputs.litellm_tag || 'latest' }}.docker.tar.sha256"
+          sha256sum "cognee-${{ inputs.cognee_tag || 'main' }}.docker.tar" > "cognee-${{ inputs.cognee_tag || 'main' }}.docker.tar.sha256"
+
+      - name: Create GitHub Release and upload image archives
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: LiteLLM and Cognee Docker images
+          generate_release_notes: true
+          body: |
+            Official container images downloaded and mirrored to GHCR.
+
+            - LiteLLM source: `${{ env.LITELLM_SOURCE }}`
+            - LiteLLM mirror: `${{ env.LITELLM_TARGET }}`
+            - Cognee source: `${{ env.COGNEE_SOURCE }}`
+            - Cognee mirror: `${{ env.COGNEE_TARGET }}`
+
+            The attached Docker archives can be imported with `docker load`.
+            Verify each archive with its accompanying `.sha256` file.
+          files: |
+            litellm-${{ inputs.litellm_tag || 'latest' }}.docker.tar
+            litellm-${{ inputs.litellm_tag || 'latest' }}.docker.tar.sha256
+            cognee-${{ inputs.cognee_tag || 'main' }}.docker.tar
+            cognee-${{ inputs.cognee_tag || 'main' }}.docker.tar.sha256
