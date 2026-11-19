@@ -1,0 +1,71 @@
+name: Download and release Cognee UI image
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Official Cognee UI image tag'
+        required: true
+        default: 'latest'
+      release_tag:
+        description: 'GitHub Release tag'
+        required: true
+        default: 'cognee-ui-20261119'
+  push:
+    paths:
+      - '.github/workflows/cognee-ui-release.yml'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  download-push-release:
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_IMAGE: cognee/cognee-ui:${{ inputs.image_tag || 'latest' }}
+      TARGET_IMAGE: ghcr.io/yingfengyou/cognee-ui:${{ inputs.image_tag || 'latest' }}
+      RELEASE_TAG: ${{ inputs.release_tag || 'cognee-ui-20261119' }}
+      ARCHIVE_NAME: cognee-ui-${{ inputs.image_tag || 'latest' }}.docker.tar
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull official image
+        run: |
+          set -eux
+          docker pull "$SOURCE_IMAGE"
+
+      - name: Retag and push image to GHCR
+        run: |
+          set -eux
+          docker tag "$SOURCE_IMAGE" "$TARGET_IMAGE"
+          docker push "$TARGET_IMAGE"
+
+      - name: Export image archive and checksum
+        run: |
+          set -eux
+          docker save "$TARGET_IMAGE" -o "$ARCHIVE_NAME"
+          sha256sum "$ARCHIVE_NAME" > "$ARCHIVE_NAME.sha256"
+
+      - name: Create GitHub Release and upload image archive
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: Cognee UI Docker image
+          generate_release_notes: true
+          body: |
+            Official Cognee UI container image downloaded and mirrored to GHCR.
+
+            - Source: `${{ env.SOURCE_IMAGE }}`
+            - GHCR mirror: `${{ env.TARGET_IMAGE }}`
+
+            The attached Docker archive can be imported with `docker load`.
+            Verify it with the accompanying `.sha256` file.
+          files: |
+            ${{ env.ARCHIVE_NAME }}
+            ${{ env.ARCHIVE_NAME }}.sha256
